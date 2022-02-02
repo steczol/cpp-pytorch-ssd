@@ -1,4 +1,73 @@
-# Single Shot MultiBox Detector Implementation in Pytorch
+# Single Shot MultiBox Detector Implementation in Pytorch and C++
+
+This repository is a fork of [pytorch-ssd](https://github.com/qfgaohao/pytorch-ssd).
+A basic inference example on MobileNetV2-SSD traced model in both python and C++ has been added.
+The preprocessing of the input image and the postprocessing of output tensor has been implemented in C++ according to the given python example.
+
+
+
+
+Currently only the CUDA version of the traced model has been tested.
+This implies, that the inference in C++ is also done using CUDA.
+
+## Dependencies
+Currently the code has been tested on *libtorch_cuda_10.2* and  *torch 1.9.1+cu111*
+1. Python 3.6+
+2. OpenCV
+3. Pytorch 1.0 or Pytorch 0.4+
+4. Caffe2
+5. Pandas
+6. Boto3 if you want to train models on the Google OpenImages Dataset.
+
+
+## Introduction
+
+Download the pretrained model, and file containing labels
+```bash
+wget -P models https://storage.googleapis.com/models-hao/mb2-ssd-lite-mp-0_686.pth
+wget -P models https://storage.googleapis.com/models-hao/voc-model-labels.txt
+```
+Convert the network to its traced version:
+```bash
+python mb2_ssd_lite_pth_to_pt.py
+```
+
+
+Run simple inference example using traced model.
+
+Python:
+```bash
+python traced_inference_example.py models/traced_mb2-ssd-lite-mp-0_686.pt crowd.jpg models/voc-model-labels.txt
+```
+The resulting image can be found in ```out```.
+
+C++:
+
+The CMAKE_PREFIX_PATH in CMakeLists.txt has to be specified.
+Pay attention to your pytorch and libtorch versions.
+Virtual environments for python such as anaconda can be very helpful here.
+
+
+```bash
+mkdir build
+cd build
+cmake ..
+make
+cd ..
+./build/traced_inference_example models/traced_mb2-ssd-lite-mp-0_686.pt crowd.jpg models/voc-model-labels.txt
+```
+The resulting image can be found in ```out```.
+
+![Example of MobileNet-V2 SSD](crowd_result.jpg  "Example of MobileNet-V2 SSD (Courtesy of https://www.pexels.com/photo/people-walking-on-pedestrian-lane-during-daytime-109919/ for the image.")
+*Image: https://www.pexels.com/photo/people-walking-on-pedestrian-lane-during-daytime-109919/*
+
+
+
+
+
+
+
+## **-- Original Reposiory --**
 
 This repo implements [SSD (Single Shot MultiBox Detector)](https://arxiv.org/abs/1512.02325). The implementation is heavily influenced by the projects [ssd.pytorch](https://github.com/amdegroot/ssd.pytorch) and [Detectron](https://github.com/facebookresearch/Detectron).
 The design goal is modularity and extensibility.
